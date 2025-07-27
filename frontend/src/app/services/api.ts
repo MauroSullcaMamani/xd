@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class Api {
-  private baseurl = 'https://xd-unt5.onrender.com//api';
+  private baseurl = 'https://xd-unt5.onrender.com/api';
   private httpHeaders = new HttpHeaders({ 'Content-Type': 'application/json' });
 
   constructor(private http: HttpClient) {}
