@@ -10,6 +10,6 @@ urlpatterns = [
     path('login/', loginView),
     path('logout/', logoutView),
     path('register/', registerView),
-    path('myuser/', CurrentUserView.as_view()),
+    path('check-user/', CurrentUserView.as_view()),
     path('', include(router.urls)),
 ]

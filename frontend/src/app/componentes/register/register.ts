@@ -2,7 +2,7 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { Auth } from '../../services/auth';
+import { User } from '../../services/user';
 
 export const passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   const password = control.get('password');
@@ -28,7 +28,7 @@ export class Register implements OnInit, OnDestroy {
   errorMessage: string | null = null;
   
   private fb = inject(FormBuilder);
-  private authService = inject(Auth);
+  private user = inject(User);
   private passwordSubscription: Subscription | undefined;
 
   constructor() {
@@ -60,7 +60,6 @@ export class Register implements OnInit, OnDestroy {
   onSubmit(): void {
     if (this.registerForm.invalid) {
         if (this.registerForm.errors?.['mismatch']) {
-            // Este console.error es útil para depurar si el validador del frontend está funcionando.
             console.error('Error de validación del frontend: Las contraseñas no coinciden.');
         }
         return;
@@ -69,16 +68,12 @@ export class Register implements OnInit, OnDestroy {
     this.successMessage = null;
     this.errorMessage = null;
 
-    // --- CORRECCIÓN AQUÍ ---
-    // Eliminamos la línea que excluía 'confirms'.
-    // Ahora enviamos el objeto completo del formulario.
-    this.authService.register(this.registerForm.value).subscribe({
+    this.user.register(this.registerForm.value).subscribe({
       next: (res) => {
         this.successMessage = res.detail || 'Usuario creado exitosamente.';
         this.registerForm.reset({ rol: 'vendedor' });
       },
       error: (err) => {
-        // El mensaje de error ahora vendrá correctamente del backend si las contraseñas no coinciden.
         this.errorMessage = err.error.detail || 'Ocurrió un error al registrar el usuario.';
       }
     });

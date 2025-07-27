@@ -1,52 +1,49 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Auth } from '../../services/auth';
 
 @Component({
   selector: 'app-login',
-  standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
-export class Login implements OnInit {
-  loginForm: FormGroup;
-  errorMessage: string | null = null;
-  isReadyToLogin = false;
-  
+export class Login {
   private fb = inject(FormBuilder);
-  private authService = inject(Auth);
+  private router = inject(Router);
+  private auth = inject(Auth);
 
-  constructor() {
-    this.loginForm = this.fb.group({
-      username: ['', Validators.required],
-      password: ['', Validators.required]
-    });
-  }
+  form!: FormGroup;
+  errorMessage = '';
+  loading = false;
 
   ngOnInit(): void {
-    this.authService.getCsrfToken().subscribe({
-      next: () => {
-        console.log('Petición para obtener CSRF completada.');
-        this.isReadyToLogin = true;
-      },
-      error: err => {
-        console.error('CRÍTICO: No se pudo obtener la cookie CSRF del backend.', err);
-        this.errorMessage = 'No se puede conectar con el servidor. Inténtelo más tarde.';
-      }
+    this.form = this.fb.group({
+      username: ['', Validators.required],
+      password: ['', Validators.required],
+    });
+
+    this.form.valueChanges.subscribe(() => {
+      this.errorMessage = '';
     });
   }
 
   onSubmit(): void {
-    if (this.loginForm.invalid || !this.isReadyToLogin) {
-      return;
-    }
-    this.errorMessage = null;
-    this.authService.login(this.loginForm.value).subscribe({
+    if (this.form.invalid) return;
+
+    this.loading = true;
+    this.auth.login(this.form.value).subscribe({
+      next: () => {
+        this.loading = false;
+        this.form.reset();
+        this.router.navigate(['/home']);
+      },
       error: (err) => {
-        this.errorMessage = err.error.detail || 'Ocurrió un error al iniciar sesión.';
-      }
+        this.errorMessage = 'Credenciales inválidas';
+        this.loading = false;
+      },
     });
   }
 }
