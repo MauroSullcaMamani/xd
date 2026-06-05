@@ -1,3 +1,29 @@
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
 # Respuesta Chatgpt
 
 Tomando exactamente los datos del Ejemplo 12.3-3 (horizonte de 4 años, costo de compra \$100,000 y reemplazo obligatorio a los 6 años), se resuelve el problema mediante Programación Dinámica.
